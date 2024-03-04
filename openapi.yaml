@@ -1,0 +1,142 @@
+openapi: 3.0.0
+info:
+  title: Your Auth API
+  version: 1.0.0
+  description: Description of your Auth API
+
+servers:
+  - url: http://127.0.0.1:8000
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/login:
+    post:
+      summary: Authenticate and receive a JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              email: user@example.com
+              password: secret
+      security: []
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              example:
+                token: your_jwt_token
+                user:
+                  id: 1
+                  name: Test
+                  email: user@example.com
+                  email_verified_at: 2024-02-024T17:52:20.000000Z
+                  created_at: 2024-02-024T17:52:20.000000Z
+                  updated_at: 2024-02-024T17:52:20.000000Z
+
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              example:
+                message: The email field must be a valid email address.
+                errors:
+                  email:
+                    - The email field must be a valid email address.
+                  passwort:
+                    - The password field is required.
+
+  /api/logout:
+    post:
+      summary: Logout and invalidate the current JWT token
+      responses:
+        '204':
+          description: Logged out
+        '401':
+          description: Unauthorized
+
+  /api/user:
+    get:
+      summary: Get information about the currently authenticated user
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                id: 1
+                name: Test
+                email: user@example.com
+                email_verified_at: 2024-02-024T17:52:20.000000Z
+                created_at: 2024-02-024T17:52:20.000000Z
+                updated_at: 2024-02-024T17:52:20.000000Z
+        '401':
+          description: Unauthorized
+
+  /api/work-log/start:
+    post:
+      summary: Mark the beginning of work
+      parameters:
+        - name: employee_id
+          in: query
+          description: ID of the employee starting work
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully launched tracker
+          content:
+            application/json:
+              example:
+                message: Successfully launched tracker
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              example:
+                message: The selected employee id is invalid.
+                errors:
+                  employee_id:
+                    - The selected employee id is invalid.
+        '401':
+          description: Unauthorized
+
+  /api/work-log/stop:
+    post:
+      summary: Mark the end of work
+      parameters:
+        - name: employee_id
+          in: query
+          description: ID of the employee ending work
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tracker stopped successfully
+          content:
+            application/json:
+              example:
+                message: Tracker stopped successfully
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              example:
+                message: The selected employee id is invalid.
+                errors:
+                  employee_id:
+                    - The selected employee id is invalid.
+        '401':
+          description: Unauthorized
